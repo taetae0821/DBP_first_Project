@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineBook - 좌석 선택</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="seat.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">🎬 CineBook</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto ms-4">
+        <li class="nav-item"><a class="nav-link" href="index.html">영화</a></li>
+        <li class="nav-item"><a class="nav-link" href="schedule.html">상영일정</a></li>
+        <li class="nav-item"><a class="nav-link" href="booking.html">예매내역</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="container">
+    <h2 style="font-size:1.5rem; font-weight:700; margin-bottom:6px;">좌석 <span style="color:#e50914">선택</span></h2>
+    <div class="movie-info-bar">
+      <strong>미션 임파서블 8</strong>
+      <span>|</span>
+      1관 일반관
+      <span>|</span>
+      오늘 14:20
+    </div>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="screen-wrap">
+        <div class="screen"></div>
+        <div class="screen-label">S C R E E N</div>
+      </div>
+      <div class="seat-grid" id="seatGrid"></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#1e2a1e; border:1px solid #2a3a2a;"></div>선택 가능</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#e50914;"></div>선택됨</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#1a1a1a; border:1px solid #222;"></div>예매됨</div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="booking-sidebar">
+        <div class="sidebar-title">예매 정보</div>
+        <div class="info-row"><span class="info-label">영화</span><span class="info-value">미션 임파서블 8</span></div>
+        <div class="info-row"><span class="info-label">상영관</span><span class="info-value">1관 일반관</span></div>
+        <div class="info-row"><span class="info-label">날짜/시간</span><span class="info-value">오늘 14:20</span></div>
+        <div class="info-row"><span class="info-label">관람등급</span><span class="info-value" style="color:#ff9800;">15세 이상</span></div>
+
+        <div style="margin-top:14px; font-size:0.82rem; color:#666; margin-bottom:4px;">선택한 좌석</div>
+        <div class="selected-seats" id="selectedDisplay">좌석을 선택해 주세요</div>
+
+        <div class="info-row" style="margin-top:8px;">
+          <span class="info-label">인원</span>
+          <span class="info-value" id="countDisplay">0명</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">금액</span>
+          <span class="price-total" id="priceDisplay">0원</span>
+        </div>
+
+        <button class="btn-confirm" id="confirmBtn" disabled onclick="window.location.href='booking.html'">예매하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const rows = ['A','B','C','D','E','F','G','H'];
+  const cols = 12;
+  const takenSeats = ['A3','A4','B7','C1','C2','D5','D6','E8','E9','F3','F4','F11','G2','G7','H5','H6','H10'];
+  let selected = [];
+  const PRICE = 14000;
+
+  const grid = document.getElementById('seatGrid');
+  rows.forEach(row => {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'seat-row';
+    const label = document.createElement('div');
+    label.className = 'row-label';
+    label.textContent = row;
+    rowEl.appendChild(label);
+
+    for (let c = 1; c <= cols; c++) {
+      if (c === 4) {
+        const gap = document.createElement('div');
+        gap.className = 'seat-gap';
+        rowEl.appendChild(gap);
+      }
+      const seatId = row + c;
+      const seat = document.createElement('div');
+      seat.className = 'seat ' + (takenSeats.includes(seatId) ? 'taken' : 'available');
+      seat.dataset.id = seatId;
+      seat.textContent = c;
+      if (!takenSeats.includes(seatId)) {
+        seat.onclick = () => toggleSeat(seat, seatId);
+      }
+      rowEl.appendChild(seat);
+    }
+    grid.appendChild(rowEl);
+  });
+
+  function toggleSeat(el, id) {
+    if (el.classList.contains('selected')) {
+      el.classList.remove('selected');
+      el.classList.add('available');
+      selected = selected.filter(s => s !== id);
+    } else {
+      if (selected.length >= 8) { alert('최대 8석까지 선택 가능해요'); return; }
+      el.classList.remove('available');
+      el.classList.add('selected');
+      selected.push(id);
+    }
+    updateSidebar();
+  }
+
+  function updateSidebar() {
+    const d = document.getElementById('selectedDisplay');
+    const cnt = document.getElementById('countDisplay');
+    const price = document.getElementById('priceDisplay');
+    const btn = document.getElementById('confirmBtn');
+    if (selected.length === 0) {
+      d.textContent = '좌석을 선택해 주세요';
+      d.style.color = '#555';
+    } else {
+      d.textContent = selected.sort().join(', ');
+      d.style.color = '#f0f0f0';
+    }
+    cnt.textContent = selected.length + '명';
+    price.textContent = (selected.length * PRICE).toLocaleString() + '원';
+    btn.disabled = selected.length === 0;
+  }
+</script>
+</body>
+</html>

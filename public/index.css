@@ -1,0 +1,85 @@
+    * { font-family: 'Noto Sans KR', sans-serif; }
+
+    body { background: #0a0a0f; color: #f0f0f0; min-height: 100vh; }
+
+    /* 네비게이션 */
+    .navbar { background: rgba(10,10,15,0.95) !important; border-bottom: 1px solid #222; backdrop-filter: blur(10px); }
+    .navbar-brand { font-size: 1.5rem; font-weight: 700; color: #e50914 !important; letter-spacing: -0.5px; }
+    .nav-link { color: #ccc !important; font-size: 0.9rem; }
+    .nav-link:hover { color: #fff !important; }
+
+    /* 히어로 배너 */
+    .hero {
+      background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+      padding: 80px 0 60px;
+      border-bottom: 1px solid #1a1a2e;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at center, rgba(229,9,20,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero h1 { font-size: 2.8rem; font-weight: 700; line-height: 1.2; }
+    .hero h1 span { color: #e50914; }
+    .hero p { color: #888; font-size: 1rem; }
+    .btn-book { background: #e50914; border: none; color: #fff; padding: 10px 28px; border-radius: 4px; font-weight: 500; font-size: 0.95rem; transition: all 0.2s; }
+    .btn-book:hover { background: #c40812; color: #fff; transform: translateY(-1px); }
+
+    /* 필터 탭 */
+    .filter-section { background: #111116; border-bottom: 1px solid #1e1e26; padding: 16px 0; }
+    .filter-btn { background: transparent; border: 1px solid #2a2a35; color: #999; border-radius: 20px; padding: 6px 18px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+    .filter-btn:hover, .filter-btn.active { background: #e50914; border-color: #e50914; color: #fff; }
+
+    /* 영화 카드 */
+    .section-title { font-size: 1.2rem; font-weight: 600; color: #f0f0f0; margin-bottom: 20px; }
+    .section-title span { color: #e50914; }
+
+    .movie-card { background: #13131a; border-radius: 10px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; border: 1px solid #1e1e26; }
+    .movie-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,0.5); }
+
+    .movie-poster {
+      width: 100%;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      display: block;
+    }
+    .poster-placeholder {
+      width: 100%;
+      aspect-ratio: 2/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+    }
+
+    .movie-info { padding: 14px; }
+    .movie-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; color: #f0f0f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .movie-meta { font-size: 0.78rem; color: #666; margin-bottom: 8px; }
+    .badge-genre { background: #1e1e30; color: #aaa; font-size: 0.72rem; padding: 3px 8px; border-radius: 4px; font-weight: 400; }
+    .badge-rating { font-size: 0.72rem; padding: 3px 8px; border-radius: 4px; font-weight: 500; }
+    .rating-all { background: #1a3a1a; color: #4caf50; }
+    .rating-12 { background: #1a2a3a; color: #2196f3; }
+    .rating-15 { background: #3a2a1a; color: #ff9800; }
+    .rating-adult { background: #3a1a1a; color: #f44336; }
+
+    .reservation-rate { font-size: 0.78rem; color: #aaa; margin-top: 6px; }
+    .reservation-rate strong { color: #e50914; }
+
+    .progress { height: 3px; background: #1e1e26; border-radius: 2px; margin-top: 4px; }
+    .progress-bar { background: #e50914; border-radius: 2px; }
+
+    /* 검색창 */
+    .search-input { background: #1a1a24; border: 1px solid #2a2a35; color: #f0f0f0; border-radius: 8px; padding: 10px 16px; font-size: 0.9rem; }
+    .search-input:focus { background: #1e1e2a; border-color: #e50914; box-shadow: 0 0 0 2px rgba(229,9,20,0.15); color: #f0f0f0; outline: none; }
+    .search-input::placeholder { color: #555; }
+
+    /* 푸터 */
+    footer { background: #080808; border-top: 1px solid #1a1a1a; padding: 30px 0; color: #444; font-size: 0.82rem; }

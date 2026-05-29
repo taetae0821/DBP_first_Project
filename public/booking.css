@@ -1,0 +1,36 @@
+
+    * { font-family: 'Noto Sans KR', sans-serif; }
+    body { background: #0a0a0f; color: #f0f0f0; min-height: 100vh; }
+    .navbar { background: rgba(10,10,15,0.95) !important; border-bottom: 1px solid #222; }
+    .navbar-brand { font-size: 1.5rem; font-weight: 700; color: #e50914 !important; }
+    .nav-link { color: #ccc !important; font-size: 0.9rem; }
+
+    .page-header { background: linear-gradient(135deg, #0a0a0f, #1a1a2e); padding: 40px 0 30px; border-bottom: 1px solid #1a1a2e; }
+
+    .stat-card { background: #13131a; border: 1px solid #1e1e26; border-radius: 10px; padding: 18px 20px; }
+    .stat-num { font-size: 1.8rem; font-weight: 700; color: #e50914; }
+    .stat-label { font-size: 0.8rem; color: #666; margin-top: 2px; }
+
+    .booking-card { background: #13131a; border: 1px solid #1e1e26; border-radius: 10px; overflow: hidden; margin-bottom: 14px; transition: border-color 0.2s; }
+    .booking-card:hover { border-color: #2a2a35; }
+    .booking-card .card-header-bar { background: #0f0f14; padding: 12px 20px; border-bottom: 1px solid #1e1e26; display: flex; justify-content: space-between; align-items: center; }
+    .booking-num { font-size: 0.78rem; color: #555; font-family: monospace; }
+    .status-badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 500; }
+    .status-confirmed { background: #1a3a1a; color: #4caf50; }
+    .status-cancelled { background: #2a1a1a; color: #f44336; }
+    .status-done { background: #1a1a2a; color: #666; }
+
+    .card-body-wrap { padding: 16px 20px; display: flex; gap: 16px; align-items: flex-start; }
+    .emoji-poster { font-size: 2.5rem; min-width: 54px; height: 72px; background: #1a1a2e; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+    .movie-title { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
+    .detail-row { font-size: 0.82rem; color: #666; margin-bottom: 3px; }
+    .detail-row strong { color: #aaa; margin-right: 4px; }
+    .seat-tag { display: inline-block; background: #1e1e30; color: #aaa; font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; margin-right: 4px; }
+    .price-tag { font-size: 1rem; font-weight: 700; color: #e50914; }
+
+    .btn-cancel { background: transparent; border: 1px solid #3a1a1a; color: #f44336; font-size: 0.8rem; padding: 5px 14px; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+    .btn-cancel:hover { background: #3a1a1a; }
+
+    .tab-btn { background: transparent; border: none; color: #666; font-size: 0.9rem; padding: 8px 16px; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .tab-btn.active { color: #e50914; border-bottom-color: #e50914; }
+    .tabs { border-bottom: 1px solid #1e1e26; margin-bottom: 20px; }

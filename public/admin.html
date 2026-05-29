@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineBook - 관리자</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- 사이드바 -->
+<div class="sidebar">
+  <div class="sidebar-logo">🎬 CineBook<span>관리자 패널</span></div>
+  <div class="sidebar-menu">
+    <div class="menu-section">대시보드</div>
+    <div class="menu-item active">📊 대시보드</div>
+    <div class="menu-section">관리</div>
+    <div class="menu-item">🎬 영화 관리</div>
+    <div class="menu-item">🏟️ 상영관 관리</div>
+    <div class="menu-item">📅 상영일정 관리</div>
+    <div class="menu-item">🎫 예매 관리</div>
+    <div class="menu-section">회원</div>
+    <div class="menu-item">👥 회원 관리</div>
+    <div class="menu-section">기타</div>
+    <div class="menu-item">🚪 로그아웃</div>
+  </div>
+</div>
+
+<!-- 메인 -->
+<div class="main-content">
+  <div class="top-bar">
+    <div class="page-title">대시 <span>보드</span></div>
+    <div style="font-size:0.82rem; color:#555;">2025년 5월 27일 기준</div>
+  </div>
+
+  <!-- 통계 카드 -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon">🎫</div>
+        <div class="stat-num">1,284</div>
+        <div class="stat-label">오늘 예매 수</div>
+        <div class="stat-change up">▲ 12% 어제 대비</div>
+      </div>
+    </div>
+    <div class="col-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-num">8,472</div>
+        <div class="stat-label">총 회원 수</div>
+        <div class="stat-change up">▲ 23명 신규</div>
+      </div>
+    </div>
+    <div class="col-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon">🎬</div>
+        <div class="stat-num">6</div>
+        <div class="stat-label">현재 상영 영화</div>
+        <div class="stat-change" style="color:#666;">상영관 5개 운영 중</div>
+      </div>
+    </div>
+    <div class="col-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-num" style="font-size:1.4rem;">17,976,000</div>
+        <div class="stat-label">오늘 매출 (원)</div>
+        <div class="stat-change up">▲ 8% 어제 대비</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <!-- 영화 예매율 -->
+    <div class="col-lg-5">
+      <div class="data-table">
+        <div class="table-header">
+          <span class="table-title">영화별 예매율</span>
+        </div>
+        <div style="padding: 16px 20px;">
+          <div style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;"><span>미션 임파서블 8</span><span style="color:#e50914; font-weight:600;">32%</span></div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:32%"></div></div>
+          </div>
+          <div style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;"><span>듄: 파트 3</span><span style="color:#e50914; font-weight:600;">28%</span></div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:28%"></div></div>
+          </div>
+          <div style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;"><span>우리들의 계절</span><span style="color:#e50914; font-weight:600;">21%</span></div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:21%"></div></div>
+          </div>
+          <div style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;"><span>별빛 여행</span><span style="color:#e50914; font-weight:600;">18%</span></div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:18%"></div></div>
+          </div>
+          <div style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;"><span>다크 하우스</span><span style="color:#e50914; font-weight:600;">15%</span></div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:15%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;"><span>소년의 시간</span><span style="color:#e50914; font-weight:600;">11%</span></div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:11%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 최근 예매 -->
+    <div class="col-lg-7">
+      <div class="data-table">
+        <div class="table-header">
+          <span class="table-title">최근 예매 내역</span>
+          <button class="btn-add">전체 보기</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>예매번호</th>
+              <th>회원</th>
+              <th>영화</th>
+              <th>좌석</th>
+              <th>금액</th>
+              <th>상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="font-family:monospace; font-size:0.75rem; color:#555">CB-0042</td><td>김민준</td><td>미션 임파서블 8</td><td>D7, D8</td><td>28,000</td><td><span class="badge-status badge-active">완료</span></td></tr>
+            <tr><td style="font-family:monospace; font-size:0.75rem; color:#555">CB-0041</td><td>이서연</td><td>듄: 파트 3</td><td>F5</td><td>16,000</td><td><span class="badge-status badge-active">완료</span></td></tr>
+            <tr><td style="font-family:monospace; font-size:0.75rem; color:#555">CB-0040</td><td>박지호</td><td>별빛 여행</td><td>A1, A2</td><td>28,000</td><td><span class="badge-status badge-active">완료</span></td></tr>
+            <tr><td style="font-family:monospace; font-size:0.75rem; color:#555">CB-0039</td><td>최유나</td><td>다크 하우스</td><td>G9</td><td>14,000</td><td><span class="badge-status badge-inactive">취소</span></td></tr>
+            <tr><td style="font-family:monospace; font-size:0.75rem; color:#555">CB-0038</td><td>정현우</td><td>소년의 시간</td><td>C3, C4, C5</td><td>42,000</td><td><span class="badge-status badge-active">완료</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 영화 관리 테이블 -->
+    <div class="col-12">
+      <div class="data-table">
+        <div class="table-header">
+          <span class="table-title">영화 관리</span>
+          <button class="btn-add">+ 영화 추가</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th><th>영화 제목</th><th>장르</th><th>러닝타임</th><th>관람등급</th><th>개봉일</th><th>상태</th><th>관리</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="color:#555">001</td><td>미션 임파서블 8</td><td>액션</td><td>148분</td><td style="color:#ff9800">15세</td><td>2025.05.21</td><td><span class="badge-status badge-active">상영중</span></td><td><button class="action-btn">수정</button><button class="action-btn del">삭제</button></td></tr>
+            <tr><td style="color:#555">002</td><td>듄: 파트 3</td><td>SF</td><td>165분</td><td style="color:#2196f3">12세</td><td>2025.05.14</td><td><span class="badge-status badge-active">상영중</span></td><td><button class="action-btn">수정</button><button class="action-btn del">삭제</button></td></tr>
+            <tr><td style="color:#555">003</td><td>우리들의 계절</td><td>로맨스</td><td>112분</td><td style="color:#2196f3">12세</td><td>2025.05.07</td><td><span class="badge-status badge-active">상영중</span></td><td><button class="action-btn">수정</button><button class="action-btn del">삭제</button></td></tr>
+            <tr><td style="color:#555">004</td><td>다크 하우스</td><td>공포</td><td>98분</td><td style="color:#f44336">청불</td><td>2025.05.01</td><td><span class="badge-status badge-active">상영중</span></td><td><button class="action-btn">수정</button><button class="action-btn del">삭제</button></td></tr>
+            <tr><td style="color:#555">005</td><td>별빛 여행</td><td>애니메이션</td><td>95분</td><td style="color:#4caf50">전체</td><td>2025.04.23</td><td><span class="badge-status badge-active">상영중</span></td><td><button class="action-btn">수정</button><button class="action-btn del">삭제</button></td></tr>
+            <tr><td style="color:#555">006</td><td>소년의 시간</td><td>드라마</td><td>132분</td><td style="color:#ff9800">15세</td><td>2025.04.16</td><td><span class="badge-status badge-inactive">상영종료</span></td><td><button class="action-btn">수정</button><button class="action-btn del">삭제</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
