@@ -28,6 +28,36 @@ app.get('/', (req, res) => {
     res.redirect('/index');
 });
 
-app.get('/signup', (req, res) => {
+app.get('/index', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+app.post('/user', (req, res) => {
+    const { name, email, phone, birth } = req.body;
+
+    console.log(req.body);
+
+    const sql = `
+        INSERT INTO MEMBER
+        (name, email, phone, birth_date, join_date)
+        VALUES (?, ?, ?, ?, NOW())
+    `;
+
+    connection.query(
+        sql,
+        [name, email, phone, birth],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('DB 저장 실패');
+            }
+
+            console.log('DB 저장 성공');
+            res.send('DB 저장 성공');
+        }
+    );
+});
+
+
+
+app.listen(3000);
