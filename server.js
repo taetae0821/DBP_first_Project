@@ -33,7 +33,7 @@ app.get('/index', (req, res) => {
 });
 
 app.post('/user', (req, res) => {
-    const { name, email, phone, birth } = req.body;
+    const { name, email, password, phone, birth } = req.body;
 
     console.log(req.body);
 
@@ -45,7 +45,7 @@ app.post('/user', (req, res) => {
 
     connection.query(
         sql,
-        [name, email, phone, birth],
+        [name, email, password, phone, birth],
         (err, result) => {
             if (err) {
 
@@ -58,6 +58,7 @@ app.post('/user', (req, res) => {
             }
             if(email.indexOf("gmail.com") || email.indexOf("naver.com") || email.indexOf("daum.net") || email.indexOf("@")){
                  console.log('DB 저장 성공');
+                 alert("회원가입 성공!");
             res.redirect('/login.html');
             }else{
                 res.send('이메일 형식이 잘못되었습니다');
@@ -87,9 +88,20 @@ app.post('/login', (req, res) => {
                 return res.status(401).send('비밀번호가 틀렸습니다.');
             }
             console.log("로그인 성공!");
-            res.redirect('/main.html');
+            res.redirect('/index.html'); 
         }
     );
+});
+
+app.get('/userinfo', (req, res) => {
+    if (!req.session.user) {
+        return res.json({ loggedIn: false });
+    }
+
+    res.json({
+        loggedIn: true,
+        name: req.session.user.name
+    });
 });
 
 app.listen(3000);
