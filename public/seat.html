@@ -18,6 +18,9 @@
         <li class="nav-item"><a class="nav-link" href="schedule.html">상영일정</a></li>
         <li class="nav-item"><a class="nav-link" href="booking.html">예매내역</a></li>
       </ul>
+      <div class="d-flex">
+        <button class="btn btn-outline-secondary btn-sm" onclick="history.back()">← 뒤로가기</button>
+      </div>
     </div>
   </div>
 </nav>
@@ -76,6 +79,7 @@
   const PRICE = 14000;
   let selected = [];
   let scheduleId = null;
+  let takenSeats = [];
 
   const params = new URLSearchParams(window.location.search);
   scheduleId = params.get('schedule_id');
@@ -86,47 +90,34 @@
       return;
     }
 
-    const res = await fetch(`/schedules?movie_id=`);
-    // 상영일정 전체에서 해당 id 찾기
-    const allRes = await fetch(`/schedules`);
-    const allSchedules = await allRes.json();
-    const schedule = allSchedules.find(s => s.id == scheduleId);
+    const res = await fetch('/schedules');
+    if (!res.ok) return;
+
+    const schedules = await res.json();
+    const schedule = schedules.find(s => s.schedule_id == scheduleId);
 
     if (schedule) {
-      const date = new Date(schedule.screen_date);
-      const dateStr = date.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
-      document.getElementById('infoBar').innerHTML = `<strong>${schedule.title}</strong> <span>|</span> ${schedule.theater} <span>|</span> ${dateStr} ${schedule.screen_time}`;
+      const showTime = new Date(schedule.show_time);
+      const dateStr = showTime.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
+      const timeStr = showTime.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+      document.getElementById('infoBar').innerHTML = `<strong>${schedule.title}</strong> <span>|</span> ${schedule.theater_name} <span>|</span> ${dateStr} ${timeStr}`;
       document.getElementById('sideTitle').textContent = schedule.title;
-      document.getElementById('sideTheater').textContent = schedule.theater;
-      document.getElementById('sideTime').textContent = `${dateStr} ${schedule.screen_time}`;
+      document.getElementById('sideTheater').textContent = schedule.theater_name;
+      document.getElementById('sideTime').textContent = `${dateStr} ${timeStr}`;
     }
 
-    loadSeats();
+    await loadTakenSeats();
+    renderSeats();
   }
 
-  async function loadSeats() {
-    const res = await fetch(`/seats/${scheduleId}`);
-    let takenSeats = [];
-
-    if (res.ok) {
-      const seats = await res.json();
-      takenSeats = seats.filter(s => s.status === 'taken').map(s => s.seat_number);
-    }
-
-    // 예매된 좌석도 확인
-    const bookRes = await fetch(`/bookings`);
-    if (bookRes.ok) {
-      const bookings = await bookRes.json();
-      const bookedSeats = bookings
-        .filter(b => b.schedule_id == scheduleId && b.status !== '취소')
-        .map(b => b.seat_number);
-      takenSeats = [...new Set([...takenSeats, ...bookedSeats])];
-    }
-
-    renderSeats(takenSeats);
+  async function loadTakenSeats() {
+    const res = await fetch(`/booked-seats/${scheduleId}`);
+    if (!res.ok) return;
+    takenSeats = await res.json();
   }
 
-  function renderSeats(takenSeats) {
+  function renderSeats() {
     const grid = document.getElementById('seatGrid');
     grid.innerHTML = '';
 
@@ -191,23 +182,27 @@
     const userRes = await fetch('/userinfo');
     if (!userRes.ok) {
       alert('로그인이 필요합니다.');
-      window.location.href = '/login.html';
+      window.location.href = 'login.html';
       return;
     }
 
-    const res = await fetch('/booking', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ schedule_id: scheduleId, seat_numbers: selected })
-    });
+    // 좌석 하나씩 순서대로 예매
+    for (const seat of selected) {
+      const res = await fetch('/booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ schedule_id: scheduleId, seat_number: seat })
+      });
 
-    const result = await res.json();
-    if (res.ok) {
-      alert('예매가 완료되었습니다!');
-      window.location.href = '/booking.html';
-    } else {
-      alert(result.message);
+      if (!res.ok) {
+        const result = await res.json();
+        alert(`좌석 ${seat} 예매 실패: ${result.message}`);
+        return;
+      }
     }
+
+    alert('예매가 완료되었습니다!');
+    window.location.href = 'booking.html';
   }
 
   loadScheduleInfo();

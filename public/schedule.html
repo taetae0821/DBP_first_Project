@@ -25,13 +25,7 @@
 <div class="page-header">
   <div class="container">
     <h2>상영 <span>일정</span></h2>
-    <p style="color:#666; font-size:0.9rem; margin:0">날짜와 영화를 선택하면 상영 시간을 확인할 수 있어요</p>
-  </div>
-</div>
-
-<div class="date-bar">
-  <div class="container">
-    <div class="d-flex gap-2 overflow-auto pb-1" id="dateBtns"></div>
+    <p style="color:#666; font-size:0.9rem; margin:0">영화를 선택하면 상영 시간을 확인할 수 있어요</p>
   </div>
 </div>
 
@@ -56,28 +50,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  const days = ['일','월','화','수','목','금','토'];
-  const today = new Date();
-  let selectedDate = today.toISOString().split('T')[0];
   let selectedMovieId = null;
-
-  // 날짜 버튼 생성
-  const container = document.getElementById('dateBtns');
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    const dateStr = d.toISOString().split('T')[0];
-    const btn = document.createElement('button');
-    btn.className = 'date-btn' + (i === 0 ? ' active' : '');
-    btn.innerHTML = `<span class="day-name">${i === 0 ? '오늘' : days[d.getDay()]}</span><span class="day-num">${d.getDate()}</span>`;
-    btn.onclick = () => {
-      document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      selectedDate = dateStr;
-      if (selectedMovieId) loadSchedules();
-    };
-    container.appendChild(btn);
-  }
 
   async function loadMovies() {
     const res = await fetch('/movies');
@@ -91,19 +64,18 @@
     }
 
     list.innerHTML = movies.map((m, i) => `
-      <div class="movie-list-item ${i === 0 ? 'active' : ''}" onclick="selectMovie(this, ${m.id})">
+      <div class="movie-list-item ${i === 0 ? 'active' : ''}" onclick="selectMovie(this, ${m.movie_id})">
         <div class="d-flex justify-content-between align-items-start">
           <div>
             <div class="title">${m.title}</div>
-            <div class="meta">${m.duration}분</div>
+            <div class="meta">${m.duration_min}분</div>
           </div>
           <span class="badge-sm">${m.rating}</span>
         </div>
       </div>
     `).join('');
 
-    // 첫 번째 영화 자동 선택
-    selectedMovieId = movies[0].id;
+    selectedMovieId = movies[0].movie_id;
     loadSchedules();
   }
 
@@ -115,7 +87,7 @@
   }
 
   async function loadSchedules() {
-    const res = await fetch(`/schedules?movie_id=${selectedMovieId}&date=${selectedDate}`);
+    const res = await fetch(`/schedules?movie_id=${selectedMovieId}`);
     const scheduleList = document.getElementById('scheduleList');
 
     if (!res.ok) {
@@ -125,29 +97,32 @@
 
     const schedules = await res.json();
     if (schedules.length === 0) {
-      scheduleList.innerHTML = '<p style="color:#666;">해당 날짜의 상영 일정이 없습니다.</p>';
+      scheduleList.innerHTML = '<p style="color:#666;">상영 일정이 없습니다.</p>';
       return;
     }
 
     // 상영관별 그룹핑
     const grouped = {};
     schedules.forEach(s => {
-      if (!grouped[s.theater]) grouped[s.theater] = [];
-      grouped[s.theater].push(s);
+      const key = s.theater_name;
+      if (!grouped[key]) grouped[key] = { theater: s, times: [] };
+      grouped[key].times.push(s);
     });
 
-    scheduleList.innerHTML = Object.entries(grouped).map(([theater, times]) => `
+    scheduleList.innerHTML = Object.values(grouped).map(({ theater, times }) => `
       <div class="theater-section">
-        <div class="theater-name">${theater}</div>
+        <div class="theater-name">${theater.theater_name} <span>|</span> ${theater.total_seats}석</div>
         <div>
           ${times.map(s => {
+            const showTime = new Date(s.show_time);
+            const timeStr = showTime.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false });
             const isSoldOut = s.available_seats === 0;
             const isFew = s.available_seats > 0 && s.available_seats <= 10;
             const seatClass = isSoldOut ? '' : isFew ? 'few' : 'many';
             const seatText = isSoldOut ? '매진' : `잔여 ${s.available_seats}석`;
             return `
-              <div class="time-slot ${isSoldOut ? 'sold-out' : ''}" ${!isSoldOut ? `onclick="goSeat(${s.id})"` : ''}>
-                <span class="time">${s.screen_time}</span>
+              <div class="time-slot ${isSoldOut ? 'sold-out' : ''}" ${!isSoldOut ? `onclick="goSeat(${s.schedule_id})"` : ''}>
+                <span class="time">${timeStr}</span>
                 <span class="seats ${seatClass}">${seatText}</span>
               </div>
             `;

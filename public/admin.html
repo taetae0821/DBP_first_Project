@@ -7,157 +7,218 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="admin.css">
+  <style>
+    .modal-content { background:#1a1a2e; color:#f0f0f0; border:1px solid #2a2a3e; }
+    .modal-header, .modal-footer { border-color:#2a2a3e; }
+    .modal-body label { color:#aaa; font-size:0.85rem; }
+    .modal-body .form-control { background:#0f0f1e; border:1px solid #2a2a3e; color:#f0f0f0; }
+    .modal-body .form-control:focus { background:#0f0f1e; color:#f0f0f0; border-color:#e50914; box-shadow:none; }
+    .btn-close { filter:invert(1); }
+  </style>
 </head>
 <body>
 
-<!-- 사이드바 -->
 <div class="sidebar">
   <div class="sidebar-logo">🎬 CineBook<span>관리자 패널</span></div>
   <div class="sidebar-menu">
     <div class="menu-section">대시보드</div>
-    <div class="menu-item active">📊 대시보드</div>
+    <div class="menu-item active" data-section="dashboard">📊 대시보드</div>
     <div class="menu-section">관리</div>
-    <div class="menu-item">🎬 영화 관리</div>
-    <div class="menu-item">🏟️ 상영관 관리</div>
-    <div class="menu-item">📅 상영일정 관리</div>
-    <div class="menu-item">🎫 예매 관리</div>
-    <div class="menu-section">회원</div>
-    <div class="menu-item">👥 회원 관리</div>
+    <div class="menu-item" data-section="movie">🎬 영화 관리</div>
+    <div class="menu-item" data-section="theater">🏟️ 상영관 관리</div>
+    <div class="menu-item" data-section="schedule">📅 상영일정 관리</div>
+    <div class="menu-item" data-section="booking">🎫 예매 관리</div>
     <div class="menu-section">기타</div>
-    <div class="menu-item">🚪 로그아웃</div>
+    <div class="menu-item" data-section="logout">🚪 로그아웃</div>
   </div>
 </div>
 
-<!-- 메인 -->
 <div class="main-content">
   <div class="top-bar">
-    <div class="page-title">대시 <span>보드</span></div>
-    <div style="font-size:0.82rem; color:#555;">2025년 5월 27일 기준</div>
+    <div class="page-title" id="pageTitle">대시 <span>보드</span></div>
   </div>
 
-  <!-- 통계 카드 -->
-  <div class="row g-3 mb-4">
-    <div class="col-6 col-xl-3">
-      <div class="stat-card">
-        <div class="stat-icon">🎫</div>
-        <div class="stat-num">1,284</div>
-        <div class="stat-label">오늘 예매 수</div>
-        <div class="stat-change up">▲ 12% 어제 대비</div>
-      </div>
-    </div>
-    <div class="col-6 col-xl-3">
-      <div class="stat-card">
-        <div class="stat-icon">👥</div>
-        <div class="stat-num">8,472</div>
-        <div class="stat-label">총 회원 수</div>
-        <div class="stat-change up">▲ 23명 신규</div>
-      </div>
-    </div>
-    <div class="col-6 col-xl-3">
-      <div class="stat-card">
-        <div class="stat-icon">🎬</div>
-        <div class="stat-num">6</div>
-        <div class="stat-label">현재 상영 영화</div>
-        <div class="stat-change" style="color:#666;">상영관 5개 운영 중</div>
-      </div>
-    </div>
-    <div class="col-6 col-xl-3">
-      <div class="stat-card">
-        <div class="stat-icon">💰</div>
-        <div class="stat-num" style="font-size:1.4rem;">17,976,000</div>
-        <div class="stat-label">오늘 매출 (원)</div>
-        <div class="stat-change up">▲ 8% 어제 대비</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row g-3">
-    <!-- 영화 예매율 -->
-    <div class="col-lg-5">
-      <div class="data-table">
-        <div class="table-header">
-          <span class="table-title">영화별 예매율</span>
+  <!-- 대시보드 -->
+  <div id="section-dashboard">
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-xl-3">
+        <div class="stat-card">
+          <div class="stat-icon">🎫</div>
+          <div class="stat-num" id="statBooking">-</div>
+          <div class="stat-label">총 예매 수</div>
         </div>
-        <div style="padding: 16px 20px;">
-          <div style="margin-bottom:16px;">
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;"><span>미션 임파서블 8</span><span style="color:#e50914; font-weight:600;">32%</span></div>
-            <div class="mini-bar"><div class="mini-bar-fill" style="width:32%"></div></div>
-          </div>
-          <div style="margin-bottom:16px;">
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;"><span>듄: 파트 3</span><span style="color:#e50914; font-weight:600;">28%</span></div>
-            <div class="mini-bar"><div class="mini-bar-fill" style="width:28%"></div></div>
-          </div>
-          <div style="margin-bottom:16px;">
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;"><span>우리들의 계절</span><span style="color:#e50914; font-weight:600;">21%</span></div>
-            <div class="mini-bar"><div class="mini-bar-fill" style="width:21%"></div></div>
-          </div>
-          <div style="margin-bottom:16px;">
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;"><span>별빛 여행</span><span style="color:#e50914; font-weight:600;">18%</span></div>
-            <div class="mini-bar"><div class="mini-bar-fill" style="width:18%"></div></div>
-          </div>
-          <div style="margin-bottom:16px;">
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;"><span>다크 하우스</span><span style="color:#e50914; font-weight:600;">15%</span></div>
-            <div class="mini-bar"><div class="mini-bar-fill" style="width:15%"></div></div>
-          </div>
-          <div>
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;"><span>소년의 시간</span><span style="color:#e50914; font-weight:600;">11%</span></div>
-            <div class="mini-bar"><div class="mini-bar-fill" style="width:11%"></div></div>
-          </div>
+      </div>
+      <div class="col-6 col-xl-3">
+        <div class="stat-card">
+          <div class="stat-icon">🎬</div>
+          <div class="stat-num" id="statMovie">-</div>
+          <div class="stat-label">상영 영화 수</div>
+        </div>
+      </div>
+      <div class="col-6 col-xl-3">
+        <div class="stat-card">
+          <div class="stat-icon">🏟️</div>
+          <div class="stat-num" id="statTheater">-</div>
+          <div class="stat-label">상영관 수</div>
+        </div>
+      </div>
+      <div class="col-6 col-xl-3">
+        <div class="stat-card">
+          <div class="stat-icon">💰</div>
+          <div class="stat-num" id="statRevenue" style="font-size:1.2rem;">-</div>
+          <div class="stat-label">총 매출 (원)</div>
         </div>
       </div>
     </div>
 
-    <!-- 최근 예매 -->
-    <div class="col-lg-7">
-      <div class="data-table">
-        <div class="table-header">
-          <span class="table-title">최근 예매 내역</span>
-          <button class="btn-add">전체 보기</button>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>예매번호</th>
-              <th>회원</th>
-              <th>영화</th>
-              <th>좌석</th>
-              <th>금액</th>
-              <th>상태</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td style="font-family:monospace; font-size:0.75rem; color:#555">CB-0042</td><td>김민준</td><td>미션 임파서블 8</td><td>D7, D8</td><td>28,000</td><td><span class="badge-status badge-active">완료</span></td></tr>
-            <tr><td style="font-family:monospace; font-size:0.75rem; color:#555">CB-0041</td><td>이서연</td><td>듄: 파트 3</td><td>F5</td><td>16,000</td><td><span class="badge-status badge-active">완료</span></td></tr>
-            <tr><td style="font-family:monospace; font-size:0.75rem; color:#555">CB-0040</td><td>박지호</td><td>별빛 여행</td><td>A1, A2</td><td>28,000</td><td><span class="badge-status badge-active">완료</span></td></tr>
-            <tr><td style="font-family:monospace; font-size:0.75rem; color:#555">CB-0039</td><td>최유나</td><td>다크 하우스</td><td>G9</td><td>14,000</td><td><span class="badge-status badge-inactive">취소</span></td></tr>
-            <tr><td style="font-family:monospace; font-size:0.75rem; color:#555">CB-0038</td><td>정현우</td><td>소년의 시간</td><td>C3, C4, C5</td><td>42,000</td><td><span class="badge-status badge-active">완료</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- 영화 관리 테이블 -->
     <div class="col-12">
       <div class="data-table">
         <div class="table-header">
-          <span class="table-title">영화 관리</span>
-          <button class="btn-add">+ 영화 추가</button>
+          <span class="table-title">최근 예매 내역</span>
         </div>
         <table>
           <thead>
-            <tr>
-              <th>ID</th><th>영화 제목</th><th>장르</th><th>러닝타임</th><th>관람등급</th><th>개봉일</th><th>상태</th><th>관리</th>
-            </tr>
+            <tr><th>예매번호</th><th>영화</th><th>상영관</th><th>좌석</th><th>일시</th><th>상태</th></tr>
           </thead>
-          <tbody>
-            <tr><td style="color:#555">001</td><td>미션 임파서블 8</td><td>액션</td><td>148분</td><td style="color:#ff9800">15세</td><td>2025.05.21</td><td><span class="badge-status badge-active">상영중</span></td><td><button class="action-btn">수정</button><button class="action-btn del">삭제</button></td></tr>
-            <tr><td style="color:#555">002</td><td>듄: 파트 3</td><td>SF</td><td>165분</td><td style="color:#2196f3">12세</td><td>2025.05.14</td><td><span class="badge-status badge-active">상영중</span></td><td><button class="action-btn">수정</button><button class="action-btn del">삭제</button></td></tr>
-            <tr><td style="color:#555">003</td><td>우리들의 계절</td><td>로맨스</td><td>112분</td><td style="color:#2196f3">12세</td><td>2025.05.07</td><td><span class="badge-status badge-active">상영중</span></td><td><button class="action-btn">수정</button><button class="action-btn del">삭제</button></td></tr>
-            <tr><td style="color:#555">004</td><td>다크 하우스</td><td>공포</td><td>98분</td><td style="color:#f44336">청불</td><td>2025.05.01</td><td><span class="badge-status badge-active">상영중</span></td><td><button class="action-btn">수정</button><button class="action-btn del">삭제</button></td></tr>
-            <tr><td style="color:#555">005</td><td>별빛 여행</td><td>애니메이션</td><td>95분</td><td style="color:#4caf50">전체</td><td>2025.04.23</td><td><span class="badge-status badge-active">상영중</span></td><td><button class="action-btn">수정</button><button class="action-btn del">삭제</button></td></tr>
-            <tr><td style="color:#555">006</td><td>소년의 시간</td><td>드라마</td><td>132분</td><td style="color:#ff9800">15세</td><td>2025.04.16</td><td><span class="badge-status badge-inactive">상영종료</span></td><td><button class="action-btn">수정</button><button class="action-btn del">삭제</button></td></tr>
-          </tbody>
+          <tbody id="dashboardBookings"></tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 영화 관리 -->
+  <div id="section-movie" style="display:none">
+    <div class="data-table">
+      <div class="table-header">
+        <span class="table-title">영화 관리</span>
+        <button class="btn-add" onclick="openMovieModal()">+ 영화 추가</button>
+      </div>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>제목</th><th>장르</th><th>러닝타임</th><th>등급</th><th>개봉일</th><th>관리</th></tr>
+        </thead>
+        <tbody id="movieTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 상영관 관리 -->
+  <div id="section-theater" style="display:none">
+    <div class="data-table">
+      <div class="table-header">
+        <span class="table-title">상영관 관리</span>
+        <button class="btn-add" onclick="openTheaterModal()">+ 상영관 추가</button>
+      </div>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>상영관명</th><th>총 좌석</th><th>관리</th></tr>
+        </thead>
+        <tbody id="theaterTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 상영일정 관리 -->
+  <div id="section-schedule" style="display:none">
+    <div class="data-table">
+      <div class="table-header">
+        <span class="table-title">상영일정 관리</span>
+        <button class="btn-add" onclick="openScheduleModal()">+ 일정 추가</button>
+      </div>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>영화</th><th>상영관</th><th>상영시간</th><th>잔여석</th><th>관리</th></tr>
+        </thead>
+        <tbody id="scheduleTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 예매 관리 -->
+  <div id="section-booking" style="display:none">
+    <div class="data-table">
+      <div class="table-header">
+        <span class="table-title">전체 예매 내역</span>
+      </div>
+      <table>
+        <thead>
+          <tr><th>예매번호</th><th>영화</th><th>상영관</th><th>좌석</th><th>일시</th><th>상태</th><th>관리</th></tr>
+        </thead>
+        <tbody id="bookingTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- 영화 모달 -->
+<div class="modal fade" id="movieModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="movieModalTitle">영화 추가</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="movieId">
+        <div class="mb-3"><label>제목</label><input type="text" id="movieTitle" class="form-control mt-1"></div>
+        <div class="mb-3"><label>장르</label><input type="text" id="movieGenre" class="form-control mt-1"></div>
+        <div class="mb-3"><label>러닝타임 (분)</label><input type="number" id="movieDuration" class="form-control mt-1"></div>
+        <div class="mb-3"><label>관람등급</label><input type="text" id="movieRating" class="form-control mt-1" placeholder="전체/12/15/청불"></div>
+        <div class="mb-3"><label>개봉일</label><input type="date" id="movieRelease" class="form-control mt-1"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-danger" onclick="saveMovie()">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 상영관 모달 -->
+<div class="modal fade" id="theaterModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="theaterModalTitle">상영관 추가</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="theaterId">
+        <div class="mb-3"><label>상영관명</label><input type="text" id="theaterName" class="form-control mt-1"></div>
+        <div class="mb-3"><label>총 좌석 수</label><input type="number" id="theaterSeats" class="form-control mt-1"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-danger" onclick="saveTheater()">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 상영일정 모달 -->
+<div class="modal fade" id="scheduleModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="scheduleModalTitle">상영일정 추가</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="scheduleId">
+        <div class="mb-3">
+          <label>영화</label>
+          <select id="scheduleMovie" class="form-control mt-1"></select>
+        </div>
+        <div class="mb-3">
+          <label>상영관</label>
+          <select id="scheduleTheater" class="form-control mt-1"></select>
+        </div>
+        <div class="mb-3"><label>상영일시</label><input type="datetime-local" id="scheduleTime" class="form-control mt-1"></div>
+        <div class="mb-3"><label>잔여 좌석</label><input type="number" id="scheduleSeats" class="form-control mt-1"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-danger" onclick="saveSchedule()">저장</button>
       </div>
     </div>
   </div>
@@ -165,12 +226,310 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+  let movies = [], theaters = [], schedules = [], bookings = [];
+
+  // 섹션 전환
   document.querySelectorAll('.menu-item').forEach(item => {
     item.addEventListener('click', () => {
+      const section = item.dataset.section;
+      if (section === 'logout') {
+        fetch('/logout', { method: 'POST' }).then(() => window.location.href = 'index.html');
+        return;
+      }
       document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
       item.classList.add('active');
+      document.querySelectorAll('[id^="section-"]').forEach(s => s.style.display = 'none');
+      document.getElementById('section-' + section).style.display = 'block';
+      loadSection(section);
     });
   });
+
+  function loadSection(section) {
+    if (section === 'dashboard') loadDashboard();
+    else if (section === 'movie') loadMovies();
+    else if (section === 'theater') loadTheaters();
+    else if (section === 'schedule') loadSchedules();
+    else if (section === 'booking') loadBookings();
+  }
+
+  // 대시보드
+  async function loadDashboard() {
+    const [mRes, tRes, bRes] = await Promise.all([
+      fetch('/movies'), fetch('/theaters'), fetch('/admin/bookings')
+    ]);
+    movies = await mRes.json();
+    theaters = await tRes.json();
+    bookings = await bRes.json();
+
+    document.getElementById('statMovie').textContent = movies.length;
+    document.getElementById('statTheater').textContent = theaters.length;
+    document.getElementById('statBooking').textContent = bookings.filter(b => b.status === 'confirmed').length;
+    document.getElementById('statRevenue').textContent = (bookings.filter(b => b.status === 'confirmed').length * 14000).toLocaleString();
+
+    document.getElementById('dashboardBookings').innerHTML = bookings.slice(0, 10).map(b => {
+      const time = new Date(b.show_time).toLocaleString('ko-KR');
+      const statusClass = b.status === 'confirmed' ? 'badge-active' : 'badge-inactive';
+      const statusLabel = b.status === 'confirmed' ? '완료' : '취소';
+      return `<tr>
+        <td style="font-family:monospace; font-size:0.75rem; color:#555">#${b.booking_id}</td>
+        <td>${b.title}</td>
+        <td>${b.theater_name}</td>
+        <td>${b.seat_number}</td>
+        <td style="font-size:0.8rem">${time}</td>
+        <td><span class="badge-status ${statusClass}">${statusLabel}</span></td>
+      </tr>`;
+    }).join('');
+  }
+
+  // 영화 관리
+  async function loadMovies() {
+    const res = await fetch('/movies');
+    movies = await res.json();
+    document.getElementById('movieTableBody').innerHTML = movies.map(m => `
+      <tr>
+        <td style="color:#555">${m.movie_id}</td>
+        <td>${m.title}</td>
+        <td>${m.genre}</td>
+        <td>${m.duration_min}분</td>
+        <td>${m.rating}</td>
+        <td>${m.release_date ? m.release_date.split('T')[0] : '-'}</td>
+        <td>
+          <button class="action-btn" onclick="editMovie(${m.movie_id})">수정</button>
+          <button class="action-btn del" onclick="deleteMovie(${m.movie_id})">삭제</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function openMovieModal(id) {
+    document.getElementById('movieModalTitle').textContent = id ? '영화 수정' : '영화 추가';
+    document.getElementById('movieId').value = '';
+    document.getElementById('movieTitle').value = '';
+    document.getElementById('movieGenre').value = '';
+    document.getElementById('movieDuration').value = '';
+    document.getElementById('movieRating').value = '';
+    document.getElementById('movieRelease').value = '';
+    new bootstrap.Modal(document.getElementById('movieModal')).show();
+  }
+
+  function editMovie(id) {
+    const m = movies.find(m => m.movie_id === id);
+    if (!m) return;
+    document.getElementById('movieModalTitle').textContent = '영화 수정';
+    document.getElementById('movieId').value = m.movie_id;
+    document.getElementById('movieTitle').value = m.title;
+    document.getElementById('movieGenre').value = m.genre;
+    document.getElementById('movieDuration').value = m.duration_min;
+    document.getElementById('movieRating').value = m.rating;
+    document.getElementById('movieRelease').value = m.release_date ? m.release_date.split('T')[0] : '';
+    new bootstrap.Modal(document.getElementById('movieModal')).show();
+  }
+
+  async function saveMovie() {
+    const id = document.getElementById('movieId').value;
+    const data = {
+      title: document.getElementById('movieTitle').value,
+      genre: document.getElementById('movieGenre').value,
+      duration_min: document.getElementById('movieDuration').value,
+      rating: document.getElementById('movieRating').value,
+      release_date: document.getElementById('movieRelease').value
+    };
+
+    const res = await fetch(id ? `/movie/${id}` : '/movie', {
+      method: id ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const result = await res.json();
+    alert(result.message);
+    bootstrap.Modal.getInstance(document.getElementById('movieModal')).hide();
+    loadMovies();
+  }
+
+  async function deleteMovie(id) {
+    if (!confirm('영화를 삭제하시겠습니까?')) return;
+    const res = await fetch(`/movie/${id}`, { method: 'DELETE' });
+    const result = await res.json();
+    alert(result.message);
+    loadMovies();
+  }
+
+  // 상영관 관리
+  async function loadTheaters() {
+    const res = await fetch('/theaters');
+    theaters = await res.json();
+    document.getElementById('theaterTableBody').innerHTML = theaters.map(t => `
+      <tr>
+        <td style="color:#555">${t.theater_id}</td>
+        <td>${t.theater_name}</td>
+        <td>${t.total_seats}석</td>
+        <td>
+          <button class="action-btn" onclick="editTheater(${t.theater_id})">수정</button>
+          <button class="action-btn del" onclick="deleteTheater(${t.theater_id})">삭제</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function openTheaterModal() {
+    document.getElementById('theaterModalTitle').textContent = '상영관 추가';
+    document.getElementById('theaterId').value = '';
+    document.getElementById('theaterName').value = '';
+    document.getElementById('theaterSeats').value = '';
+    new bootstrap.Modal(document.getElementById('theaterModal')).show();
+  }
+
+  function editTheater(id) {
+    const t = theaters.find(t => t.theater_id === id);
+    if (!t) return;
+    document.getElementById('theaterModalTitle').textContent = '상영관 수정';
+    document.getElementById('theaterId').value = t.theater_id;
+    document.getElementById('theaterName').value = t.theater_name;
+    document.getElementById('theaterSeats').value = t.total_seats;
+    new bootstrap.Modal(document.getElementById('theaterModal')).show();
+  }
+
+  async function saveTheater() {
+    const id = document.getElementById('theaterId').value;
+    const data = {
+      theater_name: document.getElementById('theaterName').value,
+      total_seats: document.getElementById('theaterSeats').value
+    };
+
+    const res = await fetch(id ? `/theater/${id}` : '/theater', {
+      method: id ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const result = await res.json();
+    alert(result.message);
+    bootstrap.Modal.getInstance(document.getElementById('theaterModal')).hide();
+    loadTheaters();
+  }
+
+  async function deleteTheater(id) {
+    if (!confirm('상영관을 삭제하시겠습니까?')) return;
+    const res = await fetch(`/theater/${id}`, { method: 'DELETE' });
+    const result = await res.json();
+    alert(result.message);
+    loadTheaters();
+  }
+
+  // 상영일정 관리
+  async function loadSchedules() {
+    const [sRes, mRes, tRes] = await Promise.all([
+      fetch('/schedules'), fetch('/movies'), fetch('/theaters')
+    ]);
+    schedules = await sRes.json();
+    movies = await mRes.json();
+    theaters = await tRes.json();
+
+    document.getElementById('scheduleTableBody').innerHTML = schedules.map(s => {
+      const time = new Date(s.show_time).toLocaleString('ko-KR');
+      return `<tr>
+        <td style="color:#555">${s.schedule_id}</td>
+        <td>${s.title}</td>
+        <td>${s.theater_name}</td>
+        <td>${time}</td>
+        <td>${s.available_seats}석</td>
+        <td>
+          <button class="action-btn" onclick="editSchedule(${s.schedule_id})">수정</button>
+          <button class="action-btn del" onclick="deleteSchedule(${s.schedule_id})">삭제</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function openScheduleModal() {
+    const [mRes, tRes] = await Promise.all([fetch('/movies'), fetch('/theaters')]);
+    movies = await mRes.json();
+    theaters = await tRes.json();
+
+    document.getElementById('scheduleModalTitle').textContent = '상영일정 추가';
+    document.getElementById('scheduleId').value = '';
+    document.getElementById('scheduleMovie').innerHTML = movies.map(m => `<option value="${m.movie_id}">${m.title}</option>`).join('');
+    document.getElementById('scheduleTheater').innerHTML = theaters.map(t => `<option value="${t.theater_id}">${t.theater_name}</option>`).join('');
+    document.getElementById('scheduleTime').value = '';
+    document.getElementById('scheduleSeats').value = '';
+    new bootstrap.Modal(document.getElementById('scheduleModal')).show();
+  }
+
+  async function editSchedule(id) {
+    const s = schedules.find(s => s.schedule_id === id);
+    if (!s) return;
+
+    const [mRes, tRes] = await Promise.all([fetch('/movies'), fetch('/theaters')]);
+    movies = await mRes.json();
+    theaters = await tRes.json();
+
+    document.getElementById('scheduleModalTitle').textContent = '상영일정 수정';
+    document.getElementById('scheduleId').value = s.schedule_id;
+    document.getElementById('scheduleMovie').innerHTML = movies.map(m => `<option value="${m.movie_id}" ${m.movie_id === s.movie_id ? 'selected' : ''}>${m.title}</option>`).join('');
+    document.getElementById('scheduleTheater').innerHTML = theaters.map(t => `<option value="${t.theater_id}" ${t.theater_id === s.theater_id ? 'selected' : ''}>${t.theater_name}</option>`).join('');
+    document.getElementById('scheduleTime').value = new Date(s.show_time).toISOString().slice(0, 16);
+    document.getElementById('scheduleSeats').value = s.available_seats;
+    new bootstrap.Modal(document.getElementById('scheduleModal')).show();
+  }
+
+  async function saveSchedule() {
+    const id = document.getElementById('scheduleId').value;
+    const data = {
+      movie_id: document.getElementById('scheduleMovie').value,
+      theater_id: document.getElementById('scheduleTheater').value,
+      show_time: document.getElementById('scheduleTime').value,
+      available_seats: document.getElementById('scheduleSeats').value
+    };
+
+    const res = await fetch(id ? `/schedule/${id}` : '/schedule', {
+      method: id ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const result = await res.json();
+    alert(result.message);
+    bootstrap.Modal.getInstance(document.getElementById('scheduleModal')).hide();
+    loadSchedules();
+  }
+
+  async function deleteSchedule(id) {
+    if (!confirm('상영일정을 삭제하시겠습니까?')) return;
+    const res = await fetch(`/schedule/${id}`, { method: 'DELETE' });
+    const result = await res.json();
+    alert(result.message);
+    loadSchedules();
+  }
+
+  // 예매 관리
+  async function loadBookings() {
+    const res = await fetch('/admin/bookings');
+    bookings = await res.json();
+
+    document.getElementById('bookingTableBody').innerHTML = bookings.map(b => {
+      const time = new Date(b.show_time).toLocaleString('ko-KR');
+      const statusClass = b.status === 'confirmed' ? 'badge-active' : 'badge-inactive';
+      const statusLabel = b.status === 'confirmed' ? '완료' : '취소';
+      return `<tr>
+        <td style="font-family:monospace; font-size:0.75rem; color:#555">#${b.booking_id}</td>
+        <td>${b.title}</td>
+        <td>${b.theater_name}</td>
+        <td>${b.seat_number}</td>
+        <td style="font-size:0.8rem">${time}</td>
+        <td><span class="badge-status ${statusClass}">${statusLabel}</span></td>
+        <td>${b.status === 'confirmed' ? `<button class="action-btn del" onclick="cancelBooking(${b.booking_id})">취소</button>` : ''}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function cancelBooking(id) {
+    if (!confirm('예매를 취소하시겠습니까?')) return;
+    const res = await fetch(`/booking/${id}`, { method: 'DELETE' });
+    const result = await res.json();
+    alert(result.message);
+    loadBookings();
+  }
+
+  // 초기 로드
+  loadDashboard();
 </script>
 </body>
 </html>

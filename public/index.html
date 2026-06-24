@@ -8,6 +8,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="index.css">
+  <style>
+    .modal-content { background:#1a1a2e; color:#f0f0f0; border:1px solid #2a2a3e; }
+    .modal-header { border-bottom:1px solid #2a2a3e; }
+    .modal-footer { border-top:1px solid #2a2a3e; }
+    .modal-poster { font-size:5rem; text-align:center; padding:20px; background:#0f0f1e; border-radius:8px; margin-bottom:16px; }
+    .modal-meta-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #2a2a3e; font-size:0.9rem; }
+    .modal-meta-row:last-child { border-bottom:none; }
+    .modal-meta-label { color:#888; }
+    .btn-close { filter: invert(1); }
+  </style>
 </head>
 <body>
 
@@ -20,8 +30,8 @@
     <div class="collapse navbar-collapse" id="nav">
       <ul class="navbar-nav me-auto ms-4">
         <li class="nav-item"><a class="nav-link active" href="#">영화</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">상영일정</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">예매내역</a></li>
+        <li class="nav-item"><a class="nav-link" href="schedule.html">상영일정</a></li>
+        <li class="nav-item"><a class="nav-link" href="booking.html">예매내역</a></li>
       </ul>
       <div class="d-flex gap-2 align-items-center">
         <input class="search-input" type="text" placeholder="영화 검색...">
@@ -39,7 +49,7 @@
         <p class="text-uppercase mb-2" style="color:#e50914; font-size:0.8rem; letter-spacing:2px; font-weight:500;">NOW SHOWING</p>
         <h1>지금 바로<br><span>원하는 영화를</span><br>예매하세요</h1>
         <p class="mt-3 mb-4">최신 영화부터 인기 상영작까지,<br>빠르고 간편하게 예매할 수 있어요.</p>
-        <button class="btn-book">예매하러 가기 →</button>
+        <button class="btn-book" onclick="window.location.href='schedule.html'">예매하러 가기 →</button>
       </div>
       <div class="col-lg-6 d-none d-lg-flex justify-content-end gap-3">
         <div style="background:#1a1a2e; border-radius:12px; padding:20px; border:1px solid #2a2a3e; width:180px">
@@ -79,7 +89,7 @@
   <div class="row g-3" id="movieGrid">
 
     <div class="col-6 col-md-4 col-lg-2 movie-item" data-genre="액션">
-      <div class="movie-card">
+      <div class="movie-card" style="cursor:pointer" onclick="showMovie('미션 임파서블 8','🎬','액션','148분','15세','2025.05.21','톰 크루즈 주연의 액션 블록버스터. 이단 헌트가 다시 한번 불가능한 임무에 도전한다.')">
         <div class="poster-placeholder">🎬</div>
         <div class="movie-info">
           <div class="d-flex gap-1 mb-2">
@@ -95,7 +105,7 @@
     </div>
 
     <div class="col-6 col-md-4 col-lg-2 movie-item" data-genre="SF">
-      <div class="movie-card">
+      <div class="movie-card" style="cursor:pointer" onclick="showMovie('듄: 파트 3','🚀','SF','165분','12세','2025.05.14','드니 빌뇌브 감독의 SF 대서사시 완결편. 폴 아트레이데스의 최후 결전.')">
         <div class="poster-placeholder">🚀</div>
         <div class="movie-info">
           <div class="d-flex gap-1 mb-2">
@@ -111,7 +121,7 @@
     </div>
 
     <div class="col-6 col-md-4 col-lg-2 movie-item" data-genre="로맨스">
-      <div class="movie-card">
+      <div class="movie-card" style="cursor:pointer" onclick="showMovie('우리들의 계절','💕','로맨스','112분','12세','2025.05.07','따뜻한 감성의 한국 로맨스 영화. 두 청춘의 풋풋한 사랑 이야기.')">
         <div class="poster-placeholder">💕</div>
         <div class="movie-info">
           <div class="d-flex gap-1 mb-2">
@@ -127,7 +137,7 @@
     </div>
 
     <div class="col-6 col-md-4 col-lg-2 movie-item" data-genre="공포">
-      <div class="movie-card">
+      <div class="movie-card" style="cursor:pointer" onclick="showMovie('다크 하우스','👻','공포','98분','청소년 관람불가','2025.05.01','폐가에서 벌어지는 초자연적 공포. 살아서 나올 수 있을까.')">
         <div class="poster-placeholder">👻</div>
         <div class="movie-info">
           <div class="d-flex gap-1 mb-2">
@@ -143,7 +153,7 @@
     </div>
 
     <div class="col-6 col-md-4 col-lg-2 movie-item" data-genre="애니메이션">
-      <div class="movie-card">
+      <div class="movie-card" style="cursor:pointer" onclick="showMovie('별빛 여행','✨','애니메이션','95분','전체 관람가','2025.04.23','온 가족이 함께 보는 따뜻한 애니메이션. 별을 따라 떠나는 신비로운 여행.')">
         <div class="poster-placeholder">✨</div>
         <div class="movie-info">
           <div class="d-flex gap-1 mb-2">
@@ -159,7 +169,7 @@
     </div>
 
     <div class="col-6 col-md-4 col-lg-2 movie-item" data-genre="드라마">
-      <div class="movie-card">
+      <div class="movie-card" style="cursor:pointer" onclick="showMovie('소년의 시간','🎭','드라마','132분','15세','2025.04.16','성장통을 겪는 소년의 이야기. 잔잔하지만 깊은 울림을 주는 드라마.')">
         <div class="poster-placeholder">🎭</div>
         <div class="movie-info">
           <div class="d-flex gap-1 mb-2">
@@ -174,6 +184,42 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- 영화 상세 모달 -->
+<div class="modal fade" id="movieModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-poster" id="modalPoster"></div>
+        <div class="modal-meta-row">
+          <span class="modal-meta-label">장르</span>
+          <span id="modalGenre"></span>
+        </div>
+        <div class="modal-meta-row">
+          <span class="modal-meta-label">상영시간</span>
+          <span id="modalDuration"></span>
+        </div>
+        <div class="modal-meta-row">
+          <span class="modal-meta-label">관람등급</span>
+          <span id="modalRating"></span>
+        </div>
+        <div class="modal-meta-row">
+          <span class="modal-meta-label">개봉일</span>
+          <span id="modalRelease"></span>
+        </div>
+        <p id="modalDesc" style="margin-top:16px; color:#aaa; font-size:0.9rem; line-height:1.6;"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+        <button type="button" class="btn btn-danger" onclick="window.location.href='schedule.html'">예매하기</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -194,6 +240,17 @@
     });
   }
 
+  function showMovie(title, poster, genre, duration, rating, release, desc) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalPoster').textContent = poster;
+    document.getElementById('modalGenre').textContent = genre;
+    document.getElementById('modalDuration').textContent = duration;
+    document.getElementById('modalRating').textContent = rating;
+    document.getElementById('modalRelease').textContent = release;
+    document.getElementById('modalDesc').textContent = desc;
+    new bootstrap.Modal(document.getElementById('movieModal')).show();
+  }
+
   async function checkLogin() {
     const res = await fetch('/userinfo');
     const authBtn = document.getElementById('authBtn');
@@ -211,7 +268,7 @@
     } else {
       userGreeting.style.display = 'none';
       authBtn.textContent = '로그인';
-      authBtn.onclick = () => { window.location.href = '/login.html'; };
+      authBtn.onclick = () => { window.location.href = 'login.html'; };
     }
   }
 

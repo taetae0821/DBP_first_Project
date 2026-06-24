@@ -70,7 +70,7 @@
     const userRes = await fetch('/userinfo');
     if (!userRes.ok) {
       alert('로그인이 필요합니다.');
-      window.location.href = "login.html";;
+      window.location.href = 'login.html';
       return;
     }
     const user = await userRes.json();
@@ -101,8 +101,9 @@
     }
 
     list.innerHTML = bookings.map(b => {
-      const date = new Date(b.screen_date);
-      const dateStr = date.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
+      const showTime = new Date(b.show_time);
+      const dateStr = showTime.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
+      const timeStr = showTime.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false });
       const isCancelled = b.status === '취소';
       const statusLabel = b.status === 'confirmed' ? '예매완료' : '취소됨';
       const statusClass = b.status === 'confirmed' ? 'status-confirmed' : 'status-cancelled';
@@ -110,18 +111,19 @@
       return `
         <div class="booking-card" data-status="${b.status}">
           <div class="card-header-bar">
-            <span class="booking-num">예매번호 #${b.id}</span>
+            <span class="booking-num">예매번호 #${b.booking_id}</span>
             <span class="status-badge ${statusClass}">${statusLabel}</span>
           </div>
           <div class="card-body-wrap" style="${isCancelled ? 'opacity:0.5' : ''}">
             <div class="emoji-poster">🎬</div>
             <div style="flex:1">
               <div class="movie-title">${b.title}</div>
-              <div class="detail-row"><strong>일시</strong>${dateStr} ${b.screen_time}</div>
-              <div class="detail-row"><strong>상영관</strong>${b.theater}</div>
+              <div class="detail-row"><strong>일시</strong>${dateStr} ${timeStr}</div>
+              <div class="detail-row"><strong>상영관</strong>${b.theater_name}</div>
               <div class="detail-row"><strong>좌석</strong><span class="seat-tag">${b.seat_number}</span></div>
+              <div class="detail-row mt-2"><span class="price-tag">14,000원</span></div>
             </div>
-            ${!isCancelled ? `<div><button class="btn-cancel" onclick="cancelBooking(${b.id})">취소</button></div>` : ''}
+            ${!isCancelled ? `<div><button class="btn-cancel" onclick="cancelBooking(${b.booking_id})">취소</button></div>` : ''}
           </div>
         </div>
       `;
