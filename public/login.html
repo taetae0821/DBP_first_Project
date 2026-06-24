@@ -4,49 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CineBook - 로그인</title>
-
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="login.css">
 </head>
 <body>
-
   <div class="login-box">
     <div class="logo">🎬 CineBook</div>
     <div class="subtitle">로그인하고 영화를 예매하세요</div>
 
     <form id="loginForm">
-
       <div class="mb-3">
         <label class="form-label">이메일</label>
-        <input
-          type="email"
-          name="email"
-          class="form-control"
-          placeholder="example@email.com"
-          required
-        >
+        <input type="email" name="email" class="form-control" placeholder="example@email.com" required>
       </div>
 
       <div class="mb-1">
         <label class="form-label">비밀번호</label>
-        <input
-          type="password"
-          name="password"
-          class="form-control"
-          placeholder="비밀번호 입력"
-          required
-        >
+        <input type="password" name="password" class="form-control" placeholder="비밀번호 입력" required>
       </div>
 
-      <div class="forgot">
-        비밀번호를 잊으셨나요?
-      </div>
+      <div class="forgot">비밀번호를 잊으셨나요?</div>
 
-      <button type="submit" class="btn-login mt-3">
-        로그인
-      </button>
-
+      <button type="submit" class="btn-login mt-3">로그인</button>
     </form>
 
     <div class="divider">또는</div>
@@ -55,7 +35,6 @@
       아직 회원이 아니신가요?
       <a href="register.html">회원가입</a>
     </div>
-
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -81,6 +60,5 @@
       }
     });
   </script>
-
 </body>
 </html>

@@ -22,7 +22,7 @@ app.use(session({
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '',
+    password: 'wlsdl0024.',
     database: 'DB_first'
 });
 
@@ -48,24 +48,28 @@ app.get('/index', (req, res) => res.sendFile(path.join(__dirname, 'public', 'ind
 app.post('/user', async (req, res) => {
     const { name, email, password, phone, birth } = req.body;
 
-    if (!name || !email || !password || !phone || !birth) {
-        return res.status(400).json({ message: '모든 필드를 입력해주세요.' });
+    if (!name || !email || !password || !birth) {
+        return res.status(400).json({ message: '필수 항목을 입력해주세요.' });
     }
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
+        const lowerEmail = email.toLowerCase();
+
         connection.query(
             'INSERT INTO MEMBER (name, email, password, phone, birth_date, join_date) VALUES (?, ?, ?, ?, ?, NOW())',
-            [name, email, hashedPassword, phone, birth],
+            [name, lowerEmail, hashedPassword, phone, birth],
             (err) => {
                 if (err) {
                     if (err.code === 'ER_DUP_ENTRY') return res.status(409).json({ message: '이미 가입된 이메일입니다.' });
+                    console.error(err);
                     return res.status(500).json({ message: 'DB 저장 실패' });
                 }
                 res.status(201).json({ message: '회원가입 성공!' });
             }
         );
     } catch (e) {
+        console.error(e);
         res.status(500).json({ message: '서버 오류' });
     }
 });
@@ -73,16 +77,17 @@ app.post('/user', async (req, res) => {
 //로그인
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
+    const lowerEmail = email.toLowerCase();
 
-    connection.query('SELECT * FROM MEMBER WHERE email = ?', [email], async (err, results) => {
-        if (err) return res.status(500).json({ message: 'DB 오류' });
+    connection.query('SELECT * FROM MEMBER WHERE email = ?', [lowerEmail], async (err, results) => {
+        if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
         if (results.length === 0) return res.status(401).json({ message: '존재하지 않는 이메일입니다.' });
 
         const user = results[0];
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ message: '비밀번호가 틀렸습니다.' });
 
-        req.session.user = { id: user.id, name: user.name, email: user.email };
+        req.session.user = { id: user.MENBER_id, name: user.name, email: user.email };
         res.json({ message: '로그인 성공', name: user.name });
     });
 });
@@ -90,10 +95,10 @@ app.post('/login', (req, res) => {
 //내 정보 조회
 app.get('/userinfo', authMiddleware, (req, res) => {
     connection.query(
-        'SELECT id, name, email, phone, birth_date, join_date FROM MEMBER WHERE id = ?',
+        'SELECT MENBER_id, name, email, phone, birth_date, join_date FROM MEMBER WHERE MENBER_id = ?',
         [req.user.id],
         (err, results) => {
-            if (err) return res.status(500).json({ message: 'DB 오류' });
+            if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
             if (results.length === 0) return res.status(404).json({ message: '사용자 없음' });
             res.json(results[0]);
         }
@@ -105,8 +110,8 @@ app.put('/user/:id', authMiddleware, (req, res) => {
     const { name, phone } = req.body;
     if (parseInt(req.params.id) !== req.user.id) return res.status(403).json({ message: '권한 없음' });
 
-    connection.query('UPDATE MEMBER SET name = ?, phone = ? WHERE id = ?', [name, phone, req.params.id], (err) => {
-        if (err) return res.status(500).json({ message: 'DB 오류' });
+    connection.query('UPDATE MEMBER SET name = ?, phone = ? WHERE MENBER_id = ?', [name, phone, req.params.id], (err) => {
+        if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
         req.session.user.name = name;
         res.json({ message: '회원 정보 수정 완료' });
     });
@@ -116,8 +121,8 @@ app.put('/user/:id', authMiddleware, (req, res) => {
 app.delete('/user/:id', authMiddleware, (req, res) => {
     if (parseInt(req.params.id) !== req.user.id) return res.status(403).json({ message: '권한 없음' });
 
-    connection.query('DELETE FROM MEMBER WHERE id = ?', [req.params.id], (err) => {
-        if (err) return res.status(500).json({ message: 'DB 오류' });
+    connection.query('DELETE FROM MEMBER WHERE MENBER_id = ?', [req.params.id], (err) => {
+        if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
         req.session.destroy(() => res.json({ message: '회원 탈퇴 완료' }));
     });
 });
@@ -135,7 +140,7 @@ app.post('/movie', authMiddleware, (req, res) => {
         'INSERT INTO MOVIE (title, genre, duration, rating, release_date, status) VALUES (?, ?, ?, ?, ?, ?)',
         [title, genre, duration, rating, release_date, status || '상영중'],
         (err, result) => {
-            if (err) return res.status(500).json({ message: 'DB 오류' });
+            if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
             res.status(201).json({ message: '영화 등록 완료', movieId: result.insertId });
         }
     );
@@ -144,7 +149,7 @@ app.post('/movie', authMiddleware, (req, res) => {
 //영화 전체 조회
 app.get('/movies', (req, res) => {
     connection.query('SELECT * FROM MOVIE ORDER BY release_date DESC', (err, results) => {
-        if (err) return res.status(500).json({ message: 'DB 오류' });
+        if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
         res.json(results);
     });
 });
@@ -152,7 +157,7 @@ app.get('/movies', (req, res) => {
 //영화 단건 조회
 app.get('/movie/:id', (req, res) => {
     connection.query('SELECT * FROM MOVIE WHERE id = ?', [req.params.id], (err, results) => {
-        if (err) return res.status(500).json({ message: 'DB 오류' });
+        if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
         if (results.length === 0) return res.status(404).json({ message: '영화 없음' });
         res.json(results[0]);
     });
@@ -166,7 +171,7 @@ app.put('/movie/:id', authMiddleware, (req, res) => {
         'UPDATE MOVIE SET title=?, genre=?, duration=?, rating=?, release_date=?, status=? WHERE id=?',
         [title, genre, duration, rating, release_date, status, req.params.id],
         (err) => {
-            if (err) return res.status(500).json({ message: 'DB 오류' });
+            if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
             res.json({ message: '영화 정보 수정 완료' });
         }
     );
@@ -175,7 +180,7 @@ app.put('/movie/:id', authMiddleware, (req, res) => {
 //영화 삭제
 app.delete('/movie/:id', authMiddleware, (req, res) => {
     connection.query('DELETE FROM MOVIE WHERE id = ?', [req.params.id], (err) => {
-        if (err) return res.status(500).json({ message: 'DB 오류' });
+        if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
         res.json({ message: '영화 삭제 완료' });
     });
 });
@@ -188,7 +193,7 @@ app.post('/schedule', authMiddleware, (req, res) => {
         'INSERT INTO SCHEDULE (movie_id, theater, screen_date, screen_time, total_seats, available_seats) VALUES (?, ?, ?, ?, ?, ?)',
         [movie_id, theater, screen_date, screen_time, total_seats, total_seats],
         (err, result) => {
-            if (err) return res.status(500).json({ message: 'DB 오류' });
+            if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
             res.status(201).json({ message: '상영 일정 등록 완료', scheduleId: result.insertId });
         }
     );
@@ -205,7 +210,7 @@ app.get('/schedules', (req, res) => {
     sql += ' ORDER BY s.screen_date, s.screen_time';
 
     connection.query(sql, params, (err, results) => {
-        if (err) return res.status(500).json({ message: 'DB 오류' });
+        if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
         res.json(results);
     });
 });
@@ -218,7 +223,7 @@ app.put('/schedule/:id', authMiddleware, (req, res) => {
         'UPDATE SCHEDULE SET theater=?, screen_date=?, screen_time=?, total_seats=? WHERE id=?',
         [theater, screen_date, screen_time, total_seats, req.params.id],
         (err) => {
-            if (err) return res.status(500).json({ message: 'DB 오류' });
+            if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
             res.json({ message: '상영 일정 수정 완료' });
         }
     );
@@ -227,7 +232,7 @@ app.put('/schedule/:id', authMiddleware, (req, res) => {
 //상영일정 삭제
 app.delete('/schedule/:id', authMiddleware, (req, res) => {
     connection.query('DELETE FROM SCHEDULE WHERE id = ?', [req.params.id], (err) => {
-        if (err) return res.status(500).json({ message: 'DB 오류' });
+        if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
         res.json({ message: '상영 일정 삭제 완료' });
     });
 });
@@ -238,7 +243,7 @@ app.get('/seats/:scheduleId', (req, res) => {
         'SELECT * FROM SEAT WHERE schedule_id = ? ORDER BY seat_number',
         [req.params.scheduleId],
         (err, results) => {
-            if (err) return res.status(500).json({ message: 'DB 오류' });
+            if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
             res.json(results);
         }
     );
@@ -298,7 +303,7 @@ app.get('/bookings', authMiddleware, (req, res) => {
          ORDER BY b.booked_at DESC`,
         [req.user.id],
         (err, results) => {
-            if (err) return res.status(500).json({ message: 'DB 오류' });
+            if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
             res.json(results);
         }
     );
@@ -309,12 +314,12 @@ app.get('/admin/bookings', authMiddleware, (req, res) => {
     connection.query(
         `SELECT b.*, mem.name as member_name, m.title, s.screen_date, s.screen_time, s.theater
          FROM BOOKING b
-         JOIN MEMBER mem ON b.member_id = mem.id
+         JOIN MEMBER mem ON b.member_id = mem.MENBER_id
          JOIN SCHEDULE s ON b.schedule_id = s.id
          JOIN MOVIE m ON s.movie_id = m.id
          ORDER BY b.booked_at DESC`,
         (err, results) => {
-            if (err) return res.status(500).json({ message: 'DB 오류' });
+            if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
             res.json(results);
         }
     );
@@ -323,7 +328,7 @@ app.get('/admin/bookings', authMiddleware, (req, res) => {
 //예매 취소
 app.delete('/booking/:id', authMiddleware, (req, res) => {
     connection.query('SELECT * FROM BOOKING WHERE id = ? AND member_id = ?', [req.params.id, req.user.id], (err, results) => {
-        if (err) return res.status(500).json({ message: 'DB 오류' });
+        if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
         if (results.length === 0) return res.status(404).json({ message: '예매 내역 없음 또는 권한 없음' });
 
         const booking = results[0];
