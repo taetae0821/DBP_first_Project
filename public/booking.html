@@ -25,148 +25,126 @@
 <div class="page-header">
   <div class="container">
     <h2 style="font-size:1.8rem; font-weight:700;">예매 <span style="color:#e50914">내역</span></h2>
-    <p style="color:#666; font-size:0.9rem; margin:0">김민준 님의 예매 내역이에요</p>
+    <p id="userNameText" style="color:#666; font-size:0.9rem; margin:0"></p>
   </div>
 </div>
 
 <div class="container py-4">
-  <!-- 통계 -->
   <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
       <div class="stat-card">
-        <div class="stat-num">8</div>
+        <div class="stat-num" id="totalCount">0</div>
         <div class="stat-label">총 예매 횟수</div>
       </div>
     </div>
     <div class="col-6 col-md-3">
       <div class="stat-card">
-        <div class="stat-num">2</div>
-        <div class="stat-label">관람 예정</div>
+        <div class="stat-num" id="confirmedCount">0</div>
+        <div class="stat-label">예매완료</div>
       </div>
     </div>
     <div class="col-6 col-md-3">
       <div class="stat-card">
-        <div class="stat-num">5</div>
-        <div class="stat-label">관람 완료</div>
-      </div>
-    </div>
-    <div class="col-6 col-md-3">
-      <div class="stat-card">
-        <div class="stat-num" style="font-size:1.3rem;">168,000</div>
-        <div class="stat-label">총 결제 금액 (원)</div>
+        <div class="stat-num" id="cancelledCount">0</div>
+        <div class="stat-label">취소</div>
       </div>
     </div>
   </div>
 
-  <!-- 탭 -->
   <div class="tabs">
     <button class="tab-btn active" onclick="filterTab('전체', this)">전체</button>
-    <button class="tab-btn" onclick="filterTab('예매완료', this)">예매완료</button>
-    <button class="tab-btn" onclick="filterTab('관람완료', this)">관람완료</button>
+    <button class="tab-btn" onclick="filterTab('confirmed', this)">예매완료</button>
     <button class="tab-btn" onclick="filterTab('취소', this)">취소</button>
   </div>
 
-  <!-- 예매 카드들 -->
   <div id="bookingList">
-
-    <div class="booking-card" data-status="예매완료">
-      <div class="card-header-bar">
-        <span class="booking-num">예매번호 CB20250527-0042</span>
-        <span class="status-badge status-confirmed">예매완료</span>
-      </div>
-      <div class="card-body-wrap">
-        <div class="emoji-poster">🎬</div>
-        <div style="flex:1">
-          <div class="movie-title">미션 임파서블 8</div>
-          <div class="detail-row"><strong>일시</strong>2025.05.30 (금) 14:20</div>
-          <div class="detail-row"><strong>상영관</strong>1관 일반관</div>
-          <div class="detail-row"><strong>좌석</strong>
-            <span class="seat-tag">D7</span>
-            <span class="seat-tag">D8</span>
-          </div>
-          <div class="detail-row mt-2"><span class="price-tag">28,000원</span></div>
-        </div>
-        <div>
-          <button class="btn-cancel">취소</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="booking-card" data-status="예매완료">
-      <div class="card-header-bar">
-        <span class="booking-num">예매번호 CB20250527-0041</span>
-        <span class="status-badge status-confirmed">예매완료</span>
-      </div>
-      <div class="card-body-wrap">
-        <div class="emoji-poster">🚀</div>
-        <div style="flex:1">
-          <div class="movie-title">듄: 파트 3</div>
-          <div class="detail-row"><strong>일시</strong>2025.06.01 (일) 17:00</div>
-          <div class="detail-row"><strong>상영관</strong>2관 IMAX관</div>
-          <div class="detail-row"><strong>좌석</strong>
-            <span class="seat-tag">F5</span>
-          </div>
-          <div class="detail-row mt-2"><span class="price-tag">16,000원</span></div>
-        </div>
-        <div>
-          <button class="btn-cancel">취소</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="booking-card" data-status="관람완료">
-      <div class="card-header-bar">
-        <span class="booking-num">예매번호 CB20250520-0038</span>
-        <span class="status-badge status-done">관람완료</span>
-      </div>
-      <div class="card-body-wrap">
-        <div class="emoji-poster">✨</div>
-        <div style="flex:1">
-          <div class="movie-title">별빛 여행</div>
-          <div class="detail-row"><strong>일시</strong>2025.05.20 (화) 15:30</div>
-          <div class="detail-row"><strong>상영관</strong>3관 4DX관</div>
-          <div class="detail-row"><strong>좌석</strong>
-            <span class="seat-tag">B3</span>
-            <span class="seat-tag">B4</span>
-            <span class="seat-tag">B5</span>
-          </div>
-          <div class="detail-row mt-2"><span class="price-tag">42,000원</span></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="booking-card" data-status="취소">
-      <div class="card-header-bar">
-        <span class="booking-num">예매번호 CB20250515-0031</span>
-        <span class="status-badge status-cancelled">취소됨</span>
-      </div>
-      <div class="card-body-wrap" style="opacity:0.5">
-        <div class="emoji-poster">💕</div>
-        <div style="flex:1">
-          <div class="movie-title">우리들의 계절</div>
-          <div class="detail-row"><strong>일시</strong>2025.05.18 (토) 13:00</div>
-          <div class="detail-row"><strong>상영관</strong>1관 일반관</div>
-          <div class="detail-row"><strong>좌석</strong>
-            <span class="seat-tag">E6</span>
-            <span class="seat-tag">E7</span>
-          </div>
-          <div class="detail-row mt-2"><span class="price-tag" style="color:#555;">28,000원 (취소)</span></div>
-        </div>
-      </div>
-    </div>
-
+    <p id="loadingMsg" style="color:#666; text-align:center; margin-top:40px;">불러오는 중...</p>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+  let allBookings = [];
+
+  async function loadBookings() {
+    const userRes = await fetch('/userinfo');
+    if (!userRes.ok) {
+      alert('로그인이 필요합니다.');
+      window.location.href = "login.html";;
+      return;
+    }
+    const user = await userRes.json();
+    document.getElementById('userNameText').textContent = user.name + ' 님의 예매 내역이에요';
+
+    const res = await fetch('/bookings');
+    if (!res.ok) {
+      document.getElementById('loadingMsg').textContent = '예매 내역을 불러올 수 없습니다.';
+      return;
+    }
+
+    allBookings = await res.json();
+    updateStats();
+    renderBookings(allBookings);
+  }
+
+  function updateStats() {
+    document.getElementById('totalCount').textContent = allBookings.length;
+    document.getElementById('confirmedCount').textContent = allBookings.filter(b => b.status === 'confirmed').length;
+    document.getElementById('cancelledCount').textContent = allBookings.filter(b => b.status === '취소').length;
+  }
+
+  function renderBookings(bookings) {
+    const list = document.getElementById('bookingList');
+    if (bookings.length === 0) {
+      list.innerHTML = '<p style="color:#666; text-align:center; margin-top:40px;">예매 내역이 없습니다.</p>';
+      return;
+    }
+
+    list.innerHTML = bookings.map(b => {
+      const date = new Date(b.screen_date);
+      const dateStr = date.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
+      const isCancelled = b.status === '취소';
+      const statusLabel = b.status === 'confirmed' ? '예매완료' : '취소됨';
+      const statusClass = b.status === 'confirmed' ? 'status-confirmed' : 'status-cancelled';
+
+      return `
+        <div class="booking-card" data-status="${b.status}">
+          <div class="card-header-bar">
+            <span class="booking-num">예매번호 #${b.id}</span>
+            <span class="status-badge ${statusClass}">${statusLabel}</span>
+          </div>
+          <div class="card-body-wrap" style="${isCancelled ? 'opacity:0.5' : ''}">
+            <div class="emoji-poster">🎬</div>
+            <div style="flex:1">
+              <div class="movie-title">${b.title}</div>
+              <div class="detail-row"><strong>일시</strong>${dateStr} ${b.screen_time}</div>
+              <div class="detail-row"><strong>상영관</strong>${b.theater}</div>
+              <div class="detail-row"><strong>좌석</strong><span class="seat-tag">${b.seat_number}</span></div>
+            </div>
+            ${!isCancelled ? `<div><button class="btn-cancel" onclick="cancelBooking(${b.id})">취소</button></div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
   function filterTab(status, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    document.querySelectorAll('.booking-card').forEach(card => {
-      card.style.display = (status === '전체' || card.dataset.status === status) ? 'block' : 'none';
-    });
+    const filtered = status === '전체' ? allBookings : allBookings.filter(b => b.status === status);
+    renderBookings(filtered);
   }
+
+  async function cancelBooking(id) {
+    if (!confirm('예매를 취소하시겠습니까?')) return;
+
+    const res = await fetch(`/booking/${id}`, { method: 'DELETE' });
+    const result = await res.json();
+    alert(result.message);
+    loadBookings();
+  }
+
+  loadBookings();
 </script>
 </body>
 </html>

@@ -25,13 +25,7 @@
 <div class="page-header">
   <div class="container">
     <h2 style="font-size:1.5rem; font-weight:700; margin-bottom:6px;">좌석 <span style="color:#e50914">선택</span></h2>
-    <div class="movie-info-bar">
-      <strong>미션 임파서블 8</strong>
-      <span>|</span>
-      1관 일반관
-      <span>|</span>
-      오늘 14:20
-    </div>
+    <div class="movie-info-bar" id="infoBar">불러오는 중...</div>
   </div>
 </div>
 
@@ -53,10 +47,9 @@
     <div class="col-lg-4">
       <div class="booking-sidebar">
         <div class="sidebar-title">예매 정보</div>
-        <div class="info-row"><span class="info-label">영화</span><span class="info-value">미션 임파서블 8</span></div>
-        <div class="info-row"><span class="info-label">상영관</span><span class="info-value">1관 일반관</span></div>
-        <div class="info-row"><span class="info-label">날짜/시간</span><span class="info-value">오늘 14:20</span></div>
-        <div class="info-row"><span class="info-label">관람등급</span><span class="info-value" style="color:#ff9800;">15세 이상</span></div>
+        <div class="info-row"><span class="info-label">영화</span><span class="info-value" id="sideTitle">-</span></div>
+        <div class="info-row"><span class="info-label">상영관</span><span class="info-value" id="sideTheater">-</span></div>
+        <div class="info-row"><span class="info-label">날짜/시간</span><span class="info-value" id="sideTime">-</span></div>
 
         <div style="margin-top:14px; font-size:0.82rem; color:#666; margin-bottom:4px;">선택한 좌석</div>
         <div class="selected-seats" id="selectedDisplay">좌석을 선택해 주세요</div>
@@ -70,7 +63,7 @@
           <span class="price-total" id="priceDisplay">0원</span>
         </div>
 
-        <button class="btn-confirm" id="confirmBtn" disabled onclick="window.location.href='booking.html'">예매하기</button>
+        <button class="btn-confirm" id="confirmBtn" disabled onclick="confirmBooking()">예매하기</button>
       </div>
     </div>
   </div>
@@ -80,37 +73,91 @@
 <script>
   const rows = ['A','B','C','D','E','F','G','H'];
   const cols = 12;
-  const takenSeats = ['A3','A4','B7','C1','C2','D5','D6','E8','E9','F3','F4','F11','G2','G7','H5','H6','H10'];
-  let selected = [];
   const PRICE = 14000;
+  let selected = [];
+  let scheduleId = null;
 
-  const grid = document.getElementById('seatGrid');
-  rows.forEach(row => {
-    const rowEl = document.createElement('div');
-    rowEl.className = 'seat-row';
-    const label = document.createElement('div');
-    label.className = 'row-label';
-    label.textContent = row;
-    rowEl.appendChild(label);
+  const params = new URLSearchParams(window.location.search);
+  scheduleId = params.get('schedule_id');
 
-    for (let c = 1; c <= cols; c++) {
-      if (c === 4) {
-        const gap = document.createElement('div');
-        gap.className = 'seat-gap';
-        rowEl.appendChild(gap);
-      }
-      const seatId = row + c;
-      const seat = document.createElement('div');
-      seat.className = 'seat ' + (takenSeats.includes(seatId) ? 'taken' : 'available');
-      seat.dataset.id = seatId;
-      seat.textContent = c;
-      if (!takenSeats.includes(seatId)) {
-        seat.onclick = () => toggleSeat(seat, seatId);
-      }
-      rowEl.appendChild(seat);
+  async function loadScheduleInfo() {
+    if (!scheduleId) {
+      document.getElementById('infoBar').textContent = '잘못된 접근입니다.';
+      return;
     }
-    grid.appendChild(rowEl);
-  });
+
+    const res = await fetch(`/schedules?movie_id=`);
+    // 상영일정 전체에서 해당 id 찾기
+    const allRes = await fetch(`/schedules`);
+    const allSchedules = await allRes.json();
+    const schedule = allSchedules.find(s => s.id == scheduleId);
+
+    if (schedule) {
+      const date = new Date(schedule.screen_date);
+      const dateStr = date.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
+      document.getElementById('infoBar').innerHTML = `<strong>${schedule.title}</strong> <span>|</span> ${schedule.theater} <span>|</span> ${dateStr} ${schedule.screen_time}`;
+      document.getElementById('sideTitle').textContent = schedule.title;
+      document.getElementById('sideTheater').textContent = schedule.theater;
+      document.getElementById('sideTime').textContent = `${dateStr} ${schedule.screen_time}`;
+    }
+
+    loadSeats();
+  }
+
+  async function loadSeats() {
+    const res = await fetch(`/seats/${scheduleId}`);
+    let takenSeats = [];
+
+    if (res.ok) {
+      const seats = await res.json();
+      takenSeats = seats.filter(s => s.status === 'taken').map(s => s.seat_number);
+    }
+
+    // 예매된 좌석도 확인
+    const bookRes = await fetch(`/bookings`);
+    if (bookRes.ok) {
+      const bookings = await bookRes.json();
+      const bookedSeats = bookings
+        .filter(b => b.schedule_id == scheduleId && b.status !== '취소')
+        .map(b => b.seat_number);
+      takenSeats = [...new Set([...takenSeats, ...bookedSeats])];
+    }
+
+    renderSeats(takenSeats);
+  }
+
+  function renderSeats(takenSeats) {
+    const grid = document.getElementById('seatGrid');
+    grid.innerHTML = '';
+
+    rows.forEach(row => {
+      const rowEl = document.createElement('div');
+      rowEl.className = 'seat-row';
+      const label = document.createElement('div');
+      label.className = 'row-label';
+      label.textContent = row;
+      rowEl.appendChild(label);
+
+      for (let c = 1; c <= cols; c++) {
+        if (c === 4) {
+          const gap = document.createElement('div');
+          gap.className = 'seat-gap';
+          rowEl.appendChild(gap);
+        }
+        const seatId = row + c;
+        const seat = document.createElement('div');
+        const isTaken = takenSeats.includes(seatId);
+        seat.className = 'seat ' + (isTaken ? 'taken' : 'available');
+        seat.dataset.id = seatId;
+        seat.textContent = c;
+        if (!isTaken) {
+          seat.onclick = () => toggleSeat(seat, seatId);
+        }
+        rowEl.appendChild(seat);
+      }
+      grid.appendChild(rowEl);
+    });
+  }
 
   function toggleSeat(el, id) {
     if (el.classList.contains('selected')) {
@@ -128,9 +175,6 @@
 
   function updateSidebar() {
     const d = document.getElementById('selectedDisplay');
-    const cnt = document.getElementById('countDisplay');
-    const price = document.getElementById('priceDisplay');
-    const btn = document.getElementById('confirmBtn');
     if (selected.length === 0) {
       d.textContent = '좌석을 선택해 주세요';
       d.style.color = '#555';
@@ -138,10 +182,35 @@
       d.textContent = selected.sort().join(', ');
       d.style.color = '#f0f0f0';
     }
-    cnt.textContent = selected.length + '명';
-    price.textContent = (selected.length * PRICE).toLocaleString() + '원';
-    btn.disabled = selected.length === 0;
+    document.getElementById('countDisplay').textContent = selected.length + '명';
+    document.getElementById('priceDisplay').textContent = (selected.length * PRICE).toLocaleString() + '원';
+    document.getElementById('confirmBtn').disabled = selected.length === 0;
   }
+
+  async function confirmBooking() {
+    const userRes = await fetch('/userinfo');
+    if (!userRes.ok) {
+      alert('로그인이 필요합니다.');
+      window.location.href = '/login.html';
+      return;
+    }
+
+    const res = await fetch('/booking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ schedule_id: scheduleId, seat_numbers: selected })
+    });
+
+    const result = await res.json();
+    if (res.ok) {
+      alert('예매가 완료되었습니다!');
+      window.location.href = '/booking.html';
+    } else {
+      alert(result.message);
+    }
+  }
+
+  loadScheduleInfo();
 </script>
 </body>
 </html>
