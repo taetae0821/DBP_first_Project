@@ -48,7 +48,6 @@
       <div class="mb-3">
         <label class="form-label">
           전화번호
-          <span style="color:#444; font-size:0.75rem;">(선택)</span>
         </label>
         <input type="tel" name="phone" class="form-control" placeholder="010-0000-0000">
       </div>
@@ -78,6 +77,31 @@
     return true;
 }
 console.log("helloworld");
+
+
+</script>
+<script>
+document.querySelector('form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+
+    const res = await fetch('/user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+        alert('회원가입 성공!');
+        window.location.href = '/login.html';
+    } else {
+        alert(result.message);
+    }
+});
 </script>
 </body>
 </html>
