@@ -22,7 +22,7 @@ app.use(session({
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'wlsdl0024.',
+    password: '',
     database: 'DB_first'
 });
 
@@ -35,6 +35,19 @@ connection.connect(err => {
 function authMiddleware(req, res, next) {
     if (!req.session.user) {
         return res.status(401).json({ message: '로그인이 필요합니다.' });
+    }
+    req.user = req.session.user;
+    next();
+}
+
+
+//관리자 미들웨어
+function adminMiddleware(req, res, next) {
+    if (!req.session.user) {
+        return res.status(401).json({ message: '로그인이 필요합니다.' });
+    }
+    if (!req.session.user.is_admin) {
+        return res.status(403).json({ message: '관리자만 접근 가능합니다.' });
     }
     req.user = req.session.user;
     next();
@@ -87,15 +100,15 @@ app.post('/login', (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ message: '비밀번호가 틀렸습니다.' });
 
-        req.session.user = { id: user.MENBER_id, name: user.name, email: user.email };
-        res.json({ message: '로그인 성공', name: user.name });
+        req.session.user = { id: user.MENBER_id, name: user.name, email: user.email, is_admin: user.is_admin };
+        res.json({ message: '로그인 성공', name: user.name, is_admin: user.is_admin });
     });
 });
 
 //내 정보 조회
 app.get('/userinfo', authMiddleware, (req, res) => {
     connection.query(
-        'SELECT MENBER_id, name, email, phone, birth_date, join_date FROM MEMBER WHERE MENBER_id = ?',
+        'SELECT MENBER_id, name, email, phone, birth_date, join_date, is_admin FROM MEMBER WHERE MENBER_id = ?',
         [req.user.id],
         (err, results) => {
             if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
@@ -133,7 +146,7 @@ app.post('/logout', (req, res) => {
 });
 
 //영화 등록
-app.post('/movie', authMiddleware, (req, res) => {
+app.post('/movie', adminMiddleware, (req, res) => {
     const { title, genre, duration_min, rating, release_date } = req.body;
 
     connection.query(
@@ -164,7 +177,7 @@ app.get('/movie/:id', (req, res) => {
 });
 
 //영화 수정
-app.put('/movie/:id', authMiddleware, (req, res) => {
+app.put('/movie/:id', adminMiddleware, (req, res) => {
     const { title, genre, duration_min, rating, release_date } = req.body;
 
     connection.query(
@@ -178,7 +191,7 @@ app.put('/movie/:id', authMiddleware, (req, res) => {
 });
 
 //영화 삭제
-app.delete('/movie/:id', authMiddleware, (req, res) => {
+app.delete('/movie/:id', adminMiddleware, (req, res) => {
     connection.query('DELETE FROM MOVIE WHERE movie_id = ?', [req.params.id], (err) => {
         if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
         res.json({ message: '영화 삭제 완료' });
@@ -194,7 +207,7 @@ app.get('/theaters', (req, res) => {
 });
 
 //상영관 등록
-app.post('/theater', authMiddleware, (req, res) => {
+app.post('/theater', adminMiddleware, (req, res) => {
     const { theater_name, total_seats } = req.body;
 
     connection.query(
@@ -208,7 +221,7 @@ app.post('/theater', authMiddleware, (req, res) => {
 });
 
 //상영관 수정
-app.put('/theater/:id', authMiddleware, (req, res) => {
+app.put('/theater/:id', adminMiddleware, (req, res) => {
     const { theater_name, total_seats } = req.body;
 
     connection.query(
@@ -222,7 +235,7 @@ app.put('/theater/:id', authMiddleware, (req, res) => {
 });
 
 //상영관 삭제
-app.delete('/theater/:id', authMiddleware, (req, res) => {
+app.delete('/theater/:id', adminMiddleware, (req, res) => {
     connection.query('DELETE FROM THEATER WHERE theater_id = ?', [req.params.id], (err) => {
         if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
         res.json({ message: '상영관 삭제 완료' });
@@ -230,7 +243,7 @@ app.delete('/theater/:id', authMiddleware, (req, res) => {
 });
 
 //상영일정 등록
-app.post('/schedule', authMiddleware, (req, res) => {
+app.post('/schedule', adminMiddleware, (req, res) => {
     const { movie_id, theater_id, show_time, available_seats } = req.body;
 
     connection.query(
@@ -268,7 +281,7 @@ app.get('/schedules', (req, res) => {
 });
 
 //상영일정 수정
-app.put('/schedule/:id', authMiddleware, (req, res) => {
+app.put('/schedule/:id', adminMiddleware, (req, res) => {
     const { movie_id, theater_id, show_time, available_seats } = req.body;
 
     connection.query(
@@ -282,7 +295,7 @@ app.put('/schedule/:id', authMiddleware, (req, res) => {
 });
 
 //상영일정 삭제
-app.delete('/schedule/:id', authMiddleware, (req, res) => {
+app.delete('/schedule/:id', adminMiddleware, (req, res) => {
     connection.query('DELETE FROM SCHEDULE WHERE schedule_id = ?', [req.params.id], (err) => {
         if (err) { console.error(err); return res.status(500).json({ message: 'DB 오류' }); }
         res.json({ message: '상영일정 삭제 완료' });
@@ -361,7 +374,7 @@ app.get('/bookings', authMiddleware, (req, res) => {
 });
 
 //전체 예매 내역 (관리자)
-app.get('/admin/bookings', authMiddleware, (req, res) => {
+app.get('/admin/bookings', adminMiddleware, (req, res) => {
     connection.query(
         `SELECT b.booking_id, b.seat_number, b.status, b.booked_at,
                 mem.name as member_name,

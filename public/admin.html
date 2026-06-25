@@ -528,8 +528,24 @@
     loadBookings();
   }
 
-  // 초기 로드
-  loadDashboard();
+  // 관리자 체크 후 초기 로드
+  async function init() {
+    const res = await fetch('/userinfo');
+    if (!res.ok) {
+      alert('로그인이 필요합니다.');
+      window.location.href = 'login.html';
+      return;
+    }
+    const user = await res.json();
+    if (!user.is_admin) {
+      alert('관리자만 접근 가능합니다.');
+      window.location.href = 'index.html';
+      return; 
+    }
+    loadDashboard();
+  }
+
+  init();
 </script>
 </body>
 </html>
